@@ -1,47 +1,66 @@
-@import '/style/root.css';
-
+html,
+body {
+    height: 100%;
+}
 
 body {
-    background: url(/images/tacky.jpg);
+    text-align: center;
+    background-image: url("../images/tacky.jpg");
+}
+
+#wrapper {
+    width: 960px;
+    height: 95%;
+    box-sizing: border-box;
+    margin: 2.5% auto;
+    background-color: #fff17a;
+}
+
+#sub-wrapper {
+    position: relative;
+    top: 15%;
+}
+
+button {
+    display: block;
+    width: 50%;
+    height: 20%;
+    margin: 0 auto;
+    font-size: 42px;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+}
+
+img {
+    height: 200px;
 }
 
 h1 {
+    padding-top: 2.5%;
+    font-family: Geo, sans-serif;
+    font-size: 4em;
+    font-weight: bold;
     color: blue;
-    
 }
 
-#container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    max-width: 600px;
-    height: 70vh;
-    background-color: #fff17a;
-    text-align: center;
+h2 {
+    margin-bottom: 25px;
+    font-size: 35px;
 }
 
-#container h1 {
-  margin: 2rem 2rem 2rem 2rem;
+h3 {
+    margin-bottom: 10px;
+    font-size: 25px;
 }
 
-#container button {
-  padding: 8px 100px;
-  text-decoration: none;
-  color: #000;
-  background-color: #ffc0cb;
-  font-weight: bold;
-  font-size: 20px;
-  border: 1px solid blue;
-  cursor: pointer;
-  transition: .3s ease;
+#start {
+    margin-top: 10%;
+    background: pink;
+    border: 2px solid blue;
 }
 
-#container button:hover {
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.startButton {
-  margin-top: 8rem;
+button:hover {
+    background: pink;
+    border: 2px solid blue;
 }
