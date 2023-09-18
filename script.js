@@ -67,16 +67,16 @@ let panel = document.getElementById("quiz-area");
 let startButton = document.getElementById("start");
 let startOverButton = document.createElement("button");
 let intervalId;
+let answeredQuestionInterval;
 
-var timer;
-
+// Start of functionality
 var game = {
     currentQuestion: 0,
     counter: 30,
-    correct: 0,
-    incorrect: 0,
+    correctAnswers: 0,
+    incorrectAnswers: 0,
 
-    countdown: () => {
+    timerCountdown: () => {
         game.counter--;
 
         if (game.counter >= 0) {
@@ -91,7 +91,7 @@ var game = {
     },
 
     loadQuestion: () => {
-        intervalId = setInterval(game.countdown, 1000);
+        intervalId = setInterval(game.timerCountdown, 1000);
 
         let timerH3 = document.createElement("h3");
         timerH3.textContent = "Time remaining: " + game.counter + " Seconds";
@@ -108,43 +108,88 @@ var game = {
             i < questions[game.currentQuestion].answers.length;
             i++
         ) {
-            let answerBtn = document.createElement("button");
-            answerBtn.textContent = questions[game.currentQuestion].answers[i];
+            let answerBtn = document.createElement("button"); // Создаем кнопку для ответа
+            let answerBtnTextContent =
+                questions[game.currentQuestion].answers[i];
+            answerBtn.value = answerBtnTextContent;
+            answerBtn.textContent = answerBtnTextContent;
             answerBtn.style.margin = "1rem auto";
             panel.append(answerBtn);
+
+            answerBtn.addEventListener("click", (e) => {
+                if (
+                    answerBtn.value ===
+                    questions[game.currentQuestion].correctAnswer
+                ) {
+                    game.answeredCorrectly();
+                } else {
+                    game.answeredIncorrectly();
+                }
+            });
         }
     },
+    answeredCorrectly: () => {
+        clearInterval(intervalId);
+        game.correctAnswers++;
+        panel.innerHTML = "";
 
-    answeredCorrectly: () => {},
-
-    answeredIncorrectly: () => {
-        game.answerBtn.addEventListener("click", () => {
-            if (
-                answerBtn.value !==
-                questions[game.currentQuestion].correctAnswer
-            ) {
-                alert("Incorrect");
-            }
-        });
+        panel.innerHTML = `<h3>Correct!</h3>
+        <img src="${questions[game.currentQuestion].image}"
+        />`;
+        answeredQuestionInterval = setInterval(() => {
+            clearInterval(answeredQuestionInterval);
+            game.nextQuestion();
+        }, 3000);
     },
 
-    timeUp: () => {
+    answeredIncorrectly: () => {
+        clearInterval(intervalId);
+        game.incorrectAnswers++;
         panel.innerHTML = "";
-        let timeUpDiv = document.createElement("div");
-        timeUpDiv.innerHTML = `<h3>Out of Time!</h3>
+        panel.innerHTML = `<h3>Nope!</h3>
         <h4>The Correct Answer was: ${
             questions[game.currentQuestion].correctAnswer
         }</h4>
         <img src="${questions[game.currentQuestion].image}"
         />`;
-        panel.append(timeUpDiv);
+        answeredQuestionInterval = setInterval(() => {
+            clearInterval(answeredQuestionInterval);
+            game.nextQuestion();
+        }, 3000);
     },
 
-    nextQuestion: () => {},
+    timeUp: () => {
+        panel.innerHTML = "";
+        panel.innerHTML = `<h3>Out of Time!</h3>
+        <h4>The Correct Answer was: ${
+            questions[game.currentQuestion].correctAnswer
+        }</h4>
+        <img src="${questions[game.currentQuestion].image}"
+        />`;
+    },
 
-    results: () => {},
+    nextQuestion: () => {
+        panel.innerHTML = "";
+        game.currentQuestion++;
+        game.loadQuestion();
 
-    clicked: (e) => {},
+        if (game.currentQuestion === questions.length) {
+            game.results();
+            clearInterval(intervalId);
+        }
+    },
+
+    results: () => {
+        // Nado proverit yesli mi doshli do konca voprosa
+        // Obnuli vse
+        // I pokaji rezultati
+        // Plus pokaji knopku reset
+
+        panel.innerHTML = "";
+        panel.innerHTML = `
+        <h1>Test</h1>
+        `;
+    },
 
     reset: () => {},
 };
@@ -155,3 +200,9 @@ startButton.addEventListener("click", () => {
 
     game.loadQuestion();
 });
+
+// game.answerBtn.addEventListener("click", () => {
+//     if (answerBtn.value !== questions[game.currentQuestion].correctAnswer) {
+//         game.answeredIncorrectly();
+//     }
+// });
