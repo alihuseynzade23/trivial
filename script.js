@@ -65,7 +65,6 @@ var questions = [
 
 let panel = document.getElementById("quiz-area");
 let startButton = document.getElementById("start");
-let startOverButton = document.createElement("button");
 let intervalId;
 let answeredQuestionInterval;
 
@@ -75,12 +74,12 @@ var game = {
     counter: 30,
     correctAnswers: 0,
     incorrectAnswers: 0,
+    unanswered: 0,
 
     timerCountdown: () => {
         game.counter--;
 
         if (game.counter >= 0) {
-            // Update the displayed timer
             let timerH3 = document.querySelector("h3.timer");
             timerH3.textContent =
                 "Time remaining: " + game.counter + " Seconds";
@@ -92,6 +91,7 @@ var game = {
 
     loadQuestion: () => {
         intervalId = setInterval(game.timerCountdown, 1000);
+        game.counter = 30;
 
         let timerH3 = document.createElement("h3");
         timerH3.textContent = "Time remaining: " + game.counter + " Seconds";
@@ -159,6 +159,7 @@ var game = {
     },
 
     timeUp: () => {
+        game.unanswered++;
         panel.innerHTML = "";
         panel.innerHTML = `<h3>Out of Time!</h3>
         <h4>The Correct Answer was: ${
@@ -166,43 +167,50 @@ var game = {
         }</h4>
         <img src="${questions[game.currentQuestion].image}"
         />`;
+        answeredQuestionInterval = setInterval(() => {
+            clearInterval(answeredQuestionInterval);
+            game.nextQuestion();
+        }, 3000);
     },
 
     nextQuestion: () => {
         panel.innerHTML = "";
         game.currentQuestion++;
-        game.loadQuestion();
-
-        if (game.currentQuestion === questions.length) {
+        if (game.currentQuestion !== questions.length) {
+            game.loadQuestion();
+        } else {
             game.results();
             clearInterval(intervalId);
         }
     },
 
     results: () => {
-        // Nado proverit yesli mi doshli do konca voprosa
-        // Obnuli vse
-        // I pokaji rezultati
-        // Plus pokaji knopku reset
-
         panel.innerHTML = "";
         panel.innerHTML = `
-        <h1>Test</h1>
+        <h2>All done, here is how you did !</h2>
+        <p>Correct Answers: ${game.correctAnswers}</p>
+        <p>Incorrect Answers: ${game.incorrectAnswers}</p>
+        <p>Unanswered: ${game.unanswered}</p>
+        <button id='startOverButton'>Start Over?</button>
         `;
+        let startOverButton = document.getElementById("startOverButton");
+        startOverButton.addEventListener("click", () => {
+            game.reset();
+        });
     },
 
-    reset: () => {},
+    reset: () => {
+        panel.innerHTML = "";
+        game.currentQuestion = 0;
+        game.correctAnswers = 0;
+        game.incorrectAnswers = 0;
+        game.unanswered = 0;
+        game.loadQuestion();
+    },
 };
 
-// CLICK EVENTS
 startButton.addEventListener("click", () => {
     startButton.style.display = "none";
 
     game.loadQuestion();
 });
-
-// game.answerBtn.addEventListener("click", () => {
-//     if (answerBtn.value !== questions[game.currentQuestion].correctAnswer) {
-//         game.answeredIncorrectly();
-//     }
-// });
